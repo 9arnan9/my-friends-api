@@ -29,7 +29,7 @@ const Friend = mongoose.model('Friend', friendSchema);
 app.get('/api/friends', async (req, res) => {
   try {
       // แก้บรรทัดนี้: .find({}, 'name -_id')
-      const friends = await Friend.find({}, 'name -_id'); 
+      const friends = await Friend.find(); 
       res.json(friends);
   } catch (err) {
       res.status(500).json({ message: err.message });
@@ -62,4 +62,5 @@ const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+
 });
