@@ -8,7 +8,7 @@ app.use(express.json());
 
 // 1. เชื่อมต่อกับ MongoDB Atlas
 // ตัวอย่างที่ถูกต้อง (อย่าลืมเปลี่ยน <db_password> เป็นรหัสผ่านที่คุณตั้งไว้)
-const mongoURI = 'mongodb+srv://arnanch_db_user:iGfn6N1Sj1eNDNwK@cluster0.jpcek17.mongodb.net/?retryWrites=true&w=majority';
+const mongoURI = process.env.MONGODB_URI; // ดึงค่าจาก "รหัสลับ" ที่เราจะไปตั้งใน Render
 
 //const mongoURI = 'YOUR_CONNECTION_STRING_HERE'; 
 mongoose.connect(mongoURI)
@@ -27,8 +27,13 @@ const Friend = mongoose.model('Friend', friendSchema);
 
 // GET: ดึงข้อมูลจาก MongoDB
 app.get('/api/friends', async (req, res) => {
-    const friends = await Friend.find(); // หาเพื่อนทุกคนใน DB
-    res.json(friends);
+  try {
+      // แก้บรรทัดนี้: .find({}, 'name -_id')
+      const friends = await Friend.find({}, 'name -_id'); 
+      res.json(friends);
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
 });
 
 // POST: เพิ่มข้อมูลลง MongoDB
